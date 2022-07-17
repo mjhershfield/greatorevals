@@ -2,23 +2,21 @@
   import logo from './assets/svelte.png'
   import Counter from './lib/Counter.svelte'
   import EvalsChart from './lib/EvalsChart.svelte';
+  import SearchView from './lib/SearchView.svelte';
+
+  //TODO: create splash screen/pretty loading screen while data is being parsed
 </script>
 
-<main class=" text-center p-1 m-x-0 my-auto font-sans">
-  <img src={logo} alt="Svelte Logo" class="h-16 w-16" />
-  <h1 class=" text-red-600 text-7xl font-thin max-w-none m-2 uppercase">Hello Typescript!</h1>
+<main>
 
-  <Counter />
+  {#await fetch("final_data.json")}
+        <p>waiting for file to be requested</p>
+    {:then resp} 
+        {#await resp.json()}
+            <p>waiting for json parsing</p>
+        {:then json} 
+            <SearchView data={json} />
+        {/await}
+    {/await}
 
-  <EvalsChart />
-
-  <p class="max-w-none m-2 text-base">
-    Visit <a href="https://svelte.dev">svelte.dev</a> to learn how to build Svelte
-    apps.
-  </p>
-
-  <p class="max-w-none m-2 text-base">
-    Check out <a href="https://github.com/sveltejs/kit#readme">SvelteKit</a> for
-    the officially supported framework, also powered by Vite!
-  </p>
 </main>
