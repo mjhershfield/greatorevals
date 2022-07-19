@@ -14,7 +14,7 @@ interface EvaluationQuestions
 
 interface FilterState
 {
-    departments: number[], [1, 2, 3]
+    departments: number[],
     class_ids: string[],
     professors: string[],
     terms: number[],
