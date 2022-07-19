@@ -1,5 +1,7 @@
-<script>
-    export let data;
+<script lang="ts">
+    import FilterOptions from "./FilterOptions.svelte";
+
+    export let data: EvaluationQuestions[];
     let filtered_data = data
 
     // TODO: FILTER DATA in a pane on the left side, save filtered data to a filtered_data array
@@ -8,8 +10,12 @@
     // TODO: CREATE DETAILS VIEW for when cards are clicked
 </script>
 
-<main>
-    {#each filtered_data.slice(0, 11) as row}
-        <p>Question {row.q}</p>
-    {/each}
+<main class=" flex flex-row h-max gap-2 p-1">
+    <FilterOptions />
+    <div>
+        <!-- Search Results -->
+        {#each filtered_data.slice(0, 11) as row}
+            <p>Question {row.q}</p>
+        {/each}
+    </div>
 </main>

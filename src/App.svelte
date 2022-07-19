@@ -8,7 +8,7 @@
 </script>
 
 <main>
-
+    <h1>GreatorEvals</h1>
   {#await fetch("final_data.json")}
         <p>waiting for file to be requested</p>
     {:then resp} 
