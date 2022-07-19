@@ -1,7 +1,10 @@
 <script lang="ts">
     import 'tw-elements';
+    import {createEventDispatcher} from "svelte";
     import {question_mappings, term_mappings} from "../assets/mappings";
     import {question_filter, term_filter} from "./stores";
+
+    const dispatch = createEventDispatcher();
 
     function question_clicked(event: Event) 
     {
@@ -37,20 +40,28 @@
             return current_filter;
         });
     };
+
+    function dispatch_filter_signal()
+    {
+        dispatch("new_filter");
+    }
 </script>
 
-<form class="flex flex-col gap-2 h-max w-1/5 bg-blue-100 p-2 rounded-lg overflow-y-auto">
+<div class="flex flex-col gap-2 w-1/5 bg-blue-100 p-2 rounded-lg overflow-y-auto">
         <!-- Filtering Menu -->
         <p>Filtering Options:</p>
+        <p class="text-center">Departments</p>
         <div>
-            <p class="text-center">Departments</p>
         </div>
+
+        <p class="text-center">Classes</p>
         <div>
-            <p class="text-center">Classes</p>
         </div>
+
+        <p class="text-center">Professors</p>
         <div>
-            <p class="text-center">Professors</p>
         </div>
+
         <p class="text-center cursor-pointer" data-bs-toggle="collapse" href="#terms_div">Terms</p>
         <div class=" bg-gray-50 rounded-lg p-2 collapse" id="terms_div">
             {#each term_mappings as term, index}
@@ -60,6 +71,7 @@
             </div>
             {/each}
         </div>
+
         <p class="text-center cursor-pointer" data-bs-toggle="collapse" href="#questions_div">Questions</p>
         <div class=" bg-gray-50 rounded-lg p-2" id="questions_div">
             {#each question_mappings as question, index}
@@ -69,5 +81,6 @@
             </div>
             {/each}
         </div>
-        <input type="button" value="Filter" class=" cursor-pointer">
-</form>
+
+        <input type="button" value="Filter" class="cursor-pointer" on:click={dispatch_filter_signal}>
+</div>

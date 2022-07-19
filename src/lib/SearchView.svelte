@@ -8,10 +8,14 @@
     // TODO: SORT FILTERED DATA BEFORE IT IS SHOWN
     // TODO: CREATE CARDS AND PAGINATION for filtered data
     // TODO: CREATE DETAILS VIEW for when cards are clicked
+    function filter_data(event: Event)
+    {
+        alert("FILTERING DATA");
+    }
 </script>
 
 <main class=" flex flex-row h-max gap-2 p-1">
-    <FilterOptions />
+    <FilterOptions on:new_filter={filter_data}/>
     <div>
         <!-- Search Results -->
         {#each filtered_data.slice(0, 11) as row}
