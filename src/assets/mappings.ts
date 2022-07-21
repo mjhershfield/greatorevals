@@ -6502,7 +6502,7 @@ export let course_mappings: string[] =
     "MTG7396, Advanced Topics in Topology I",
     "MTG7397, Advanced Topics in Topology II"];
 
-let professor_mappings: string[] = 
+export let professor_mappings: string[] = 
     ["Martin-Ryals, Ana",
     "Correll, Melanie",
     "Munoz-Carpena, Rafael",
