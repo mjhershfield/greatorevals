@@ -5,9 +5,7 @@ const config = {
     extend: {},
   },
 
-  plugins: [
-    require('tw-elements/dist/plugin')
-  ],
+  plugins: [],
 };
 
 module.exports = config;

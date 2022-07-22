@@ -12,11 +12,12 @@ interface EvaluationQuestions
     p5: number,
 }
 
-class FilterState
+interface FilterState
 {
-    departments: number[] = [];
-    class_ids: string[] = [];
-    professors: string[] = [];
-    terms: number[] = [];
-    questions: number[] = [];
+    departments: number[];
+    courses: number[];
+    course_levels: number[];
+    professors: number[];
+    terms: number[];
+    questions: number[];
 }

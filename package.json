@@ -24,7 +24,10 @@
     "vite": "^2.9.9"
   },
   "dependencies": {
+    "@svelteuidev/composables": "^0.7.0",
+    "@svelteuidev/core": "^0.7.0",
     "charts.css": "^0.9.0",
-    "tw-elements": "^1.0.0-alpha12"
+    "fuse.js": "^6.6.2",
+    "radix-icons-svelte": "^1.2.1"
   }
 }

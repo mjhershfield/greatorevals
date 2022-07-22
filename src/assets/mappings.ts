@@ -193,6 +193,17 @@ export let department_mappings: string[] = [
     "VEM(VM)-Small Animal Clin Sci",
     "VEM(VM)-Veterinary Medical Sci"];
 
+export let course_level_mappings: string[] = 
+    ["1000 Level",
+    "2000 Level",
+    "3000 Level",
+    "4000 Level",
+    "5000 Level",
+    "6000 Level",
+    "7000 Level",
+    "8000 Level"
+    ];
+
 export let course_mappings: string[] = 
     ["ABE2012C, Introduction to Biological Engineering",
     "ABE3000C, Applications in Biological Engineering",
