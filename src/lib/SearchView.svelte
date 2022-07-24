@@ -2,7 +2,8 @@
     import { course_mappings, professor_mappings, term_mappings } from "../assets/mappings";
     export let data: EvaluationQuestions[];
     export let filter: FilterState;
-    let filtered_data = data
+    let filtered_data: EvaluationQuestions[] = data;
+    let compacted_filtered_data = data;
 
     function filter_data(filter: FilterState)
     {
@@ -13,28 +14,27 @@
         else
         {
             filtered_data = data.filter((row: EvaluationQuestions): boolean => {
-                if ((filter.departments.length > 0) && !filter.departments.includes(row.d))
+                if ((filter.departments.size > 0) && !filter.departments.has(row.d))
                 {
                     return false;
                 }
-                if ((filter.courses.length > 0) && !filter.courses.includes(row.c))
+                if ((filter.courses.size > 0) && !filter.courses.has(row.c))
                 {
                     return false;
                 }
-                let upper_digit_of_course: unknown = course_mappings[row.c].at(3);
-                if ((filter.course_levels.length > 0) && !filter.course_levels.includes(<number> upper_digit_of_course))
+                if ((filter.course_levels.size > 0) && !filter.course_levels.has(+course_mappings[row.c].at(3)))
                 {
                     return false;
                 }
-                if ((filter.professors.length > 0) && !filter.professors.includes(row.p))
+                if ((filter.professors.size > 0) && !filter.professors.has(row.p))
                 {
                     return false;
                 }
-                if ((filter.terms.length > 0) && !filter.terms.includes(row.t))
+                if ((filter.terms.size > 0) && !filter.terms.has(row.t))
                 {
                     return false;
                 }
-                if ((filter.questions.length > 0) && !filter.questions.includes(row.q))
+                if ((filter.questions.size > 0) && !filter.questions.has(row.q))
                 {
                     return false;
                 }

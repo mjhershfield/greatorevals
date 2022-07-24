@@ -29,96 +29,99 @@
     $: prof_search_result = prof_search.search(prof_search_term).slice(0, 5);
 
     let filter_state: FilterState = {
-        departments: [],
-        courses: [],
-        course_levels:[],
-        professors: [],
-        terms: [],
-        questions: []
+        departments: new Set<number>,
+        courses: new Set<number>,
+        course_levels: new Set<number>,
+        professors: new Set<number>,
+        terms: new Set<number>,
+        questions: new Set<number>
     };
 
     function department_clicked(department_num: number) 
     {
-        if (filter_state.departments.includes(department_num))
-        {
-            filter_state.departments.splice(filter_state.departments.indexOf(department_num), 1)
-        }
-        else 
-        {
-            filter_state.departments.push(department_num);
-        }
-        filter_state = filter_state;
-        console.log(filter_state.departments);
+        if (filter_state.departments.has(department_num))
+            {
+                filter_state.departments.delete(department_num);
+            }
+            else 
+            {
+                filter_state.departments.add(department_num);
+            }
+            filter_state = filter_state;
+            console.log([... filter_state.departments.values()]);
     };
 
     function course_clicked(course_num: number) 
     {
-        if (filter_state.courses.includes(course_num))
-        {
-            filter_state.courses.splice(filter_state.courses.indexOf(course_num), 1)
-        }
-        else 
-        {
-            filter_state.courses.push(course_num);
-        }
-        filter_state = filter_state;
-        console.log(filter_state.courses);
+        if (filter_state.courses.has(course_num))
+            {
+                filter_state.courses.delete(course_num);
+            }
+            else 
+            {
+                filter_state.courses.add(course_num);
+            }
+            filter_state = filter_state;
+            console.log([... filter_state.courses.values()]);
     };
 
     function course_level_clicked(course_level: number) 
     {
-        if (filter_state.course_levels.includes(course_level))
-        {
-            filter_state.course_levels.splice(filter_state.course_levels.indexOf(course_level), 1)
-        }
-        else 
-        {
-            filter_state.course_levels.push(course_level);
-        }
-        filter_state = filter_state;
-        console.log(filter_state.course_levels);
+        if (filter_state.course_levels.has(course_level))
+            {
+                filter_state.course_levels.delete(course_level);
+            }
+            else 
+            {
+                filter_state.course_levels.add(course_level);
+            }
+            filter_state = filter_state;
+            console.log([... filter_state.course_levels.values()]);
+
     };
 
     function prof_clicked(prof_num: number) 
     {
-        if (filter_state.professors.includes(prof_num))
-        {
-            filter_state.professors.splice(filter_state.professors.indexOf(prof_num), 1)
-        }
-        else 
-        {
-            filter_state.professors.push(prof_num);
-        }
-        filter_state = filter_state;
-        console.log(filter_state.professors);
+        if (filter_state.professors.has(prof_num))
+            {
+                filter_state.professors.delete(prof_num);
+            }
+            else 
+            {
+                filter_state.professors.add(prof_num);
+            }
+            filter_state = filter_state;
+            console.log([... filter_state.professors.values()]);
+
     };
 
     function question_clicked(question_num: number) 
     {
-        if (filter_state.questions.includes(<number> question_num))
-        {
-            filter_state.questions.splice(filter_state.questions.indexOf(<number> question_num), 1)
-        }
-        else 
-        {
-            filter_state.questions.push(<number> question_num);
-        }
-        filter_state = filter_state;
-        console.log(filter_state.questions);
+        if (filter_state.questions.has(question_num))
+            {
+                filter_state.questions.delete(question_num);
+            }
+            else 
+            {
+                filter_state.questions.add(question_num);
+            }
+            filter_state = filter_state;
+            console.log([... filter_state.questions.values()]);
     };
 
     function term_clicked(term_num: number) 
     {
-            if (filter_state.terms.includes(<number> term_num))
+            if (filter_state.terms.has(term_num))
             {
-                filter_state.terms.splice(filter_state.terms.indexOf(<number> term_num), 1)
+                filter_state.terms.delete(term_num);
             }
             else 
             {
-                filter_state.terms.push(<number> term_num);
+                filter_state.terms.add(term_num);
             }
             filter_state = filter_state;
-            console.log(filter_state.terms);
+            console.log([... filter_state.terms.values()]);
+
     };
 
     function dispatch_filter_signal()
@@ -138,7 +141,7 @@
                 <Button variant="light" ripple on:click={()=>{department_clicked(result.refIndex)}}>{result.item}</Button>
             {/each}
             <Divider />
-            {#each filter_state.departments as department_index}
+            {#each [...filter_state.departments.values()] as department_index}
                 <Button variant="filled" ripple on:click={()=>{department_clicked(department_index)}}>{department_mappings[department_index]}</Button>
             {/each}
         </Stack>
@@ -152,7 +155,7 @@
                 <Button variant="light" ripple on:click={()=>{course_clicked(result.refIndex)}}>{result.item}</Button>
             {/each}
             <Divider />
-            {#each filter_state.courses as course_index}
+            {#each [...filter_state.courses.values()] as course_index}
                 <Button variant="filled" ripple on:click={()=>{course_clicked(course_index)}}>{course_mappings[course_index]}</Button>
             {/each}
         </Stack>
@@ -173,7 +176,7 @@
                 <Button variant="light" ripple on:click={()=>{prof_clicked(result.refIndex)}}>{result.item}</Button>
             {/each}
             <Divider />
-            {#each filter_state.professors as prof_index}
+            {#each [... filter_state.professors.values()] as prof_index}
                 <Button variant="filled" ripple on:click={()=>{prof_clicked(prof_index)}}>{professor_mappings[prof_index]}</Button>
             {/each}
         </Stack>

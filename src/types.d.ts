@@ -12,12 +12,30 @@ interface EvaluationQuestions
     p5: number,
 }
 
+// TODO: change all of these arrays to maps
 interface FilterState
 {
-    departments: number[];
-    courses: number[];
-    course_levels: number[];
-    professors: number[];
-    terms: number[];
-    questions: number[];
+    departments: Set<number>;
+    courses: Set<number>;
+    course_levels: Set<number>;
+    professors: Set<number>;
+    terms: Set<number>;
+    questions: Set<number>;
+}
+
+interface CompactedData
+{
+    department: number;
+    course: number;
+    professor: number;
+    terms: Map<number, Map<number, Ratings>>;
+}
+
+interface Ratings
+{
+    percentage_1: number;
+    percentage_2: number;
+    percentage_3: number;
+    percentage_4: number;
+    percentage_5: number;
 }
