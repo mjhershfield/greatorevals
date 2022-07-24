@@ -1,8 +1,8 @@
 interface EvaluationQuestions
 {
     d: number, // Department (int)
-    c: string, // Course Number/description
-    p: string, // Professor
+    c: number, // Course Number/description
+    p: number, // Professor
     t: number, // Term (int)
     q: number, // Question (int)
     p1: number,

@@ -3,10 +3,12 @@
     import SearchView from './lib/SearchView.svelte';
     import FilterOptions from "./lib/FilterOptions.svelte";
 
+    let filter: FilterState;
+
 
     function filter_data(event: CustomEvent)
     {
-        alert("Filter Applied:" + JSON.stringify(event.detail.filter));
+        filter = event.detail.filter;
     }
 
 </script>
@@ -28,7 +30,7 @@
                     <p>waiting for json parsing</p>
                     <Center><Loader size="xl"/></Center>
                 {:then json} 
-                    <SearchView data={json} />
+                    <SearchView data={json} bind:filter/>
                 {/await}
             {/await}
         </slot>
