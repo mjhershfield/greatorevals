@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Button, Checkbox, Stack, TextInput, Divider } from '@svelteuidev/core';
+    import { Button, Checkbox, Stack, TextInput, Divider, NativeSelect } from '@svelteuidev/core';
     import {createEventDispatcher} from "svelte";
     import {course_mappings, course_level_mappings, department_mappings, professor_mappings, question_mappings, term_mappings} from "../assets/mappings";
 
@@ -29,6 +29,7 @@
     $: prof_search_result = prof_search.search(prof_search_term).slice(0, 5);
 
     let filter_state: FilterState = {
+        group_by: "Department",
         departments: new Set<number>,
         courses: new Set<number>,
         course_levels: new Set<number>,
@@ -131,7 +132,8 @@
 </script>
 
 <div class="flex flex-col gap-2 overflow-y-auto">
-    <!-- Filtering Menu -->
+    <!-- TODO: add "Sort by" dropdown above the filtering options -->
+    <NativeSelect data={["Department", "Course Number", "Professor"]} label="Group By:" bind:value={filter_state.group_by}/>
     <p>Filtering Options:</p>
     <details>
         <summary class="text-center cursor-pointer">Departments</summary>

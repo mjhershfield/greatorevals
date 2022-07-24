@@ -1,58 +1,153 @@
 <script lang="ts">
-    import { course_mappings, professor_mappings, term_mappings } from "../assets/mappings";
+    import { Paper, Stack } from "@svelteuidev/core";
+    import { course_mappings, department_mappings, professor_mappings } from "../assets/mappings";
     export let data: EvaluationQuestions[];
     export let filter: FilterState;
-    let filtered_data: EvaluationQuestions[] = data;
-    let compacted_filtered_data = data;
+    let rows_matching_filter: number[];
+    let grouped_data: GroupedData[];
 
     function filter_data(filter: FilterState)
     {
+        rows_matching_filter = []
         if (filter === undefined)
         {
-            filtered_data = data;
+            return;
         }
         else
         {
-            filtered_data = data.filter((row: EvaluationQuestions): boolean => {
-                if ((filter.departments.size > 0) && !filter.departments.has(row.d))
+            for (const row of data.entries())
+            {
+                if ((filter.departments.size > 0) && !filter.departments.has(row[1].d))
                 {
-                    return false;
+                    continue;
                 }
-                if ((filter.courses.size > 0) && !filter.courses.has(row.c))
+                if ((filter.courses.size > 0) && !filter.courses.has(row[1].c))
                 {
-                    return false;
+                    continue;
                 }
-                if ((filter.course_levels.size > 0) && !filter.course_levels.has(+course_mappings[row.c].at(3)))
+                if ((filter.course_levels.size > 0) && !filter.course_levels.has(+course_mappings[row[1].c].at(3)))
                 {
-                    return false;
+                    continue;
                 }
-                if ((filter.professors.size > 0) && !filter.professors.has(row.p))
+                if ((filter.professors.size > 0) && !filter.professors.has(row[1].p))
                 {
-                    return false;
+                    continue;
                 }
-                if ((filter.terms.size > 0) && !filter.terms.has(row.t))
+                if ((filter.terms.size > 0) && !filter.terms.has(row[1].t))
                 {
-                    return false;
+                    continue;
                 }
-                if ((filter.questions.size > 0) && !filter.questions.has(row.q))
+                if ((filter.questions.size > 0) && !filter.questions.has(row[1].q))
                 {
-                    return false;
+                    continue;
                 }
-                return true;
-            })
+                rows_matching_filter.push(row[0]);
+            }
+            rows_matching_filter = rows_matching_filter;
         }
         // COMPACT DATA REPRESENTATION SO THAT ALL QUESTIONS FOR SAME COURSE ARE MERGED INTO ONE?
     }
 
-    $: filter_data(filter);
+    function group_data()
+    {
+        grouped_data = [];
+        // department/course/professor id -> index in grouped_data for matching data
+        let index_mappings = new Map<number, number>;
+        let index_to_match: number;
+        for (const row_index of rows_matching_filter)
+        {
+            if (filter.group_by == "Course Number")
+            {
+                index_to_match = data[row_index].c;
+            }
+            else if (filter.group_by == "Department")
+            {
+                index_to_match = data[row_index].d;
+            }
+            else if (filter.group_by == "Professor")
+            {
+                index_to_match = data[row_index].p;
+            }
+
+            if (index_mappings.has(index_to_match))
+            {
+                // Add to existing GroupedData object
+                grouped_data[index_mappings.get(index_to_match)].matching_rows.push(row_index);
+            }
+            else
+            {
+                // create new GroupedData object
+                index_mappings.set(index_to_match, grouped_data.length);
+                grouped_data.push({
+                    matching_rows: [row_index],
+                    average_ratings_by_question: new Array(10).fill(0, 0),
+                    overall_average_rating: 0
+                });
+            }
+        }
+        return;
+    }
+
+    function compute_averages()
+    {
+        let number_of_rows_per_question: number[] = new Array(10);
+        let current_row: EvaluationQuestions;
+        let number_of_questions_answered_in_group: number;
+        for (let group of grouped_data)
+        {
+            number_of_rows_per_question.fill(0, 0);
+            number_of_questions_answered_in_group = 0;
+
+            for (const row_index of group.matching_rows)
+            {
+                current_row = data[row_index]
+                group.average_ratings_by_question[current_row.q] += 
+                    (1 * current_row.p1 + 2 * current_row.p2 + 3 * current_row.p3 +
+                     4 * current_row.p4 + 5 *current_row.p5);
+                number_of_rows_per_question[current_row.q] += 1;
+            }
+
+            for (let q_index = 0; q_index < 10; q_index++) {
+                if (number_of_rows_per_question[q_index] > 0)
+                {
+                    group.average_ratings_by_question[q_index] /= number_of_rows_per_question[q_index];
+                    number_of_questions_answered_in_group += 1;
+                    group.overall_average_rating += group.average_ratings_by_question[q_index];
+                }
+            }
+
+            group.overall_average_rating /= number_of_questions_answered_in_group;
+        }
+
+        console.log(grouped_data);
+    }
+
+    $: {
+            filter_data(filter);
+            group_data();
+            compute_averages();
+        }
 </script>
 
-<div>
+<Stack>
     <!-- Search Results -->
-    {#each filtered_data.slice(0, 10) as row}
-        <p>Course: {course_mappings[row.c]}</p>
-        <p>Professor: {professor_mappings[row.p]}</p>
-        <p>Term: {term_mappings[row.t]}</p>
-        <p>Click for more info</p>
-    {/each}
-</div>
+    {#if filter === undefined}
+        <p>Choose a filter from the left panel</p>
+    {:else if grouped_data.length == 0}
+        <p>No results match your filter selection</p>
+    {:else}
+        {#each grouped_data.slice(0, 10) as row}
+        <Paper>
+            {#if filter.group_by == "Course Number"}
+                <p>Course: {course_mappings[data[row.matching_rows[0]].c]}</p>
+            {:else if filter.group_by == "Professor"}
+                <p>Professor: {professor_mappings[data[row.matching_rows[0]].p]}</p>
+            {:else if filter.group_by == "Department"}
+                <p>Department: {department_mappings[data[row.matching_rows[0]].d]}</p>
+            {/if}
+            <p>Average Rating: {row.overall_average_rating}</p>
+            <p>Click for more info</p>
+        </Paper>
+        {/each}
+    {/if}
+</Stack>

@@ -12,9 +12,9 @@ interface EvaluationQuestions
     p5: number,
 }
 
-// TODO: change all of these arrays to maps
 interface FilterState
 {
+    group_by: GroupingOptions;
     departments: Set<number>;
     courses: Set<number>;
     course_levels: Set<number>;
@@ -23,19 +23,11 @@ interface FilterState
     questions: Set<number>;
 }
 
-interface CompactedData
+interface GroupedData
 {
-    department: number;
-    course: number;
-    professor: number;
-    terms: Map<number, Map<number, Ratings>>;
+    matching_rows: number[];
+    average_ratings_by_question: number[];
+    overall_average_rating : number;
 }
 
-interface Ratings
-{
-    percentage_1: number;
-    percentage_2: number;
-    percentage_3: number;
-    percentage_4: number;
-    percentage_5: number;
-}
+type GroupingOptions = "Department" | "Course Number" | "Professor";
