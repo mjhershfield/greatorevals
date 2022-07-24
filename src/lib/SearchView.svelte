@@ -1,10 +1,27 @@
 <script lang="ts">
-    import { Paper, Stack } from "@svelteuidev/core";
+    import { Stack, Modal} from "@svelteuidev/core";
     import { course_mappings, department_mappings, professor_mappings } from "../assets/mappings";
+    import SearchResultCard from "./SearchResultCard.svelte";
+    import DetailsView from './DetailsView.svelte';
+    
     export let data: EvaluationQuestions[];
     export let filter: FilterState;
     let rows_matching_filter: number[];
     let grouped_data: GroupedData[];
+    let processing_in_progress: boolean = false;
+    let opened: boolean = false;
+    let details_index: number = 0;
+
+    function open_details_view(index: number)
+    {
+        opened = true;
+        details_index = index;
+    }
+
+    function close_modal()
+    {
+        opened = false;
+    }
 
     function filter_data(filter: FilterState)
     {
@@ -123,31 +140,28 @@
     }
 
     $: {
+            processing_in_progress = true;
             filter_data(filter);
             group_data();
             compute_averages();
+            processing_in_progress = false;
         }
 </script>
 
+<Modal {opened} on:close={close_modal} withCloseButton={false} centered size="90vw">
+    <DetailsView details_data={grouped_data[details_index]} grouping_method={filter.group_by} overall_data={data} />
+</Modal>
 <Stack>
     <!-- Search Results -->
     {#if filter === undefined}
         <p>Choose a filter from the left panel</p>
+    {:else if processing_in_progress}
+        <p>Processing in progress</p>
     {:else if grouped_data.length == 0}
         <p>No results match your filter selection</p>
     {:else}
-        {#each grouped_data.slice(0, 10) as row}
-        <Paper>
-            {#if filter.group_by == "Course Number"}
-                <p>Course: {course_mappings[data[row.matching_rows[0]].c]}</p>
-            {:else if filter.group_by == "Professor"}
-                <p>Professor: {professor_mappings[data[row.matching_rows[0]].p]}</p>
-            {:else if filter.group_by == "Department"}
-                <p>Department: {department_mappings[data[row.matching_rows[0]].d]}</p>
-            {/if}
-            <p>Average Rating: {row.overall_average_rating}</p>
-            <p>Click for more info</p>
-        </Paper>
+        {#each grouped_data.slice(0, 10) as row, index}
+            <SearchResultCard overall_data={data} group_data={row} grouping_method={filter.group_by} on:open_details={() => {open_details_view(index)}}/>
         {/each}
     {/if}
 </Stack>

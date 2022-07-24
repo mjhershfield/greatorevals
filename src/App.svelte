@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { AppShell, Navbar, Header, SvelteUIProvider, Center , Loader, Title, TypographyProvider } from '@svelteuidev/core';
+    import { AppShell, Navbar, Header, SvelteUIProvider, Center , Loader, Title, Modal } from '@svelteuidev/core';
     import SearchView from './lib/SearchView.svelte';
     import FilterOptions from "./lib/FilterOptions.svelte";
 
@@ -10,7 +10,6 @@
     {
         filter = event.detail.filter;
     }
-
 </script>
 
 <SvelteUIProvider>
@@ -30,7 +29,7 @@
                     <p>waiting for json parsing</p>
                     <Center><Loader size="xl"/></Center>
                 {:then json} 
-                    <SearchView data={json} bind:filter/>
+                    <SearchView data={json} bind:filter />
                 {/await}
             {/await}
         </slot>
