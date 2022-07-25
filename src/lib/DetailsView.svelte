@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import {course_mappings, department_mappings, professor_mappings, question_mappings} from "../assets/mappings";
     import Chart from 'chart.js/auto/auto.js';
+    import { Grid } from "@svelteuidev/core";
     export let overall_data: EvaluationQuestions[];
     export let details_data: GroupedData;
     export let grouping_method: GroupingOptions;
@@ -13,6 +14,7 @@
     let threes: number[] = new Array(10).fill(1, 0);
     let fours: number[] = new Array(10).fill(1, 0);
     let fives: number[] = new Array(10).fill(1, 0);
+    let extra_info_array: number[] = [];
 
     // TODO: compute actual data for chart lol
 
@@ -92,8 +94,56 @@
         // Initialize chart using default config set
         let myChart = new Chart(ctx, config);
     });
+
+    function populate_info_array(details_data: GroupedData)
+    {
+        extra_info_array.splice(0);
+        let extra_info_set: Set<number> = new Set<number>;
+        if (grouping_method == "Department")
+        {
+            return;
+        }
+        for (const row_index of details_data.matching_rows)
+        {
+            if (grouping_method == "Course Number")
+            {
+                if (!extra_info_set.has(overall_data[row_index].p))
+                {
+                    extra_info_set.add(row_index);
+                    extra_info_array.push(row_index);
+                }
+            }
+            else if (grouping_method == "Professor")
+            if (!extra_info_set.has(overall_data[row_index].c))
+            {
+                extra_info_set.add(row_index);
+                extra_info_array.push(row_index);
+            }
+        }
+    }
+
+    $: populate_info_array(details_data);
 </script>
 
-<!-- TODO: show information about what department professor/class is from -->
 <!-- TODO: show comparison between professor and similar professors? -->
-<canvas bind:this={canvas_element}/>
+<Grid>
+    <Grid.Col span={3}>
+        {#if grouping_method == "Course Number" || grouping_method == "Professor"}
+            <p>Department: {department_mappings[overall_data[details_data.matching_rows[0]].d]}</p>
+        {/if}
+        {#if grouping_method == "Course Number"}
+            <p>Professors that have taught this course:</p>
+            {#each extra_info_array as professor_index}
+                <p>{professor_mappings[professor_index]}</p>
+            {/each}
+        {:else if grouping_method == "Professor"}
+            <p>Courses that this professor has taught:</p>
+            {#each extra_info_array as course_index}
+                <p>{course_mappings[course_index]}</p>
+            {/each}
+        {/if}
+    </Grid.Col>
+    <Grid.Col span={9}>
+        <canvas bind:this={canvas_element}/>
+    </Grid.Col>
+</Grid>
