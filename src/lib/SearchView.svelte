@@ -220,7 +220,7 @@
     {:else if grouped_data.length == 0}
         <p>No results match your filter selection</p>
     {:else}
-        {#each grouped_data.slice(0, 10) as row, index}
+        {#each grouped_data.slice(0, 30) as row, index}
             <SearchResultCard overall_data={data} group_data={row} grouping_method={filter.group_by} on:open_details={() => {open_details_view(index)}}/>
         {/each}
     {/if}

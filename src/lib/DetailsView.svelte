@@ -16,6 +16,7 @@
     let fives: number[] = new Array(10);
     let num_answers_per_question: number[] = new Array(10);
     let extra_info_array: number[] = [];
+    let extra_info_span: number = 3;
 
     // TODO: compute actual data for chart lol
 
@@ -168,11 +169,21 @@
         update_chart_data();
         populate_info_array();
     }
+    $: {
+        if (grouping_method == "Department")
+        {
+            extra_info_span = 0;
+        }
+        else
+        {
+            extra_info_span = 3;
+        }
+    }
 </script>
 
 <!-- TODO: show comparison between professor and similar professors? -->
 <Grid>
-    <Grid.Col span={3}>
+    <Grid.Col span={extra_info_span}>
         {#if grouping_method == "Course Number" || grouping_method == "Professor"}
             <p>Department: {department_mappings[overall_data[details_data.matching_rows[0]].d]}</p>
             <br>
@@ -193,7 +204,7 @@
             </ul>
         {/if}
     </Grid.Col>
-    <Grid.Col span={9}>
+    <Grid.Col span={12 - extra_info_span}>
         <canvas bind:this={canvas_element}/>
     </Grid.Col>
 </Grid>

@@ -133,7 +133,7 @@
     }
 </script>
 
-<div class="flex flex-col gap-2 overflow-y-auto">
+<Stack>
     <NativeSelect data={["Department", "Course Number", "Professor"]} label="Group By:" bind:value={filter_state.group_by}/>
     <NativeSelect data={["Rating", "Name"]} label="Sort By:" bind:value={filter_state.sort_by}/>
     <NativeSelect data={["Descending", "Ascending"]} label="Sort Order:" bind:value={filter_state.sort_order}/>
@@ -201,5 +201,5 @@
             {/each}
     </details>
 
-    <Button on:click={dispatch_filter_signal} variant="gradient" ripple class="min-h-4 flex-shrink-0">Filter</Button>
-</div>
+    <Button on:click={dispatch_filter_signal} variant="gradient" ripple class="min-h-4 flex-shrink-0 mb-2">Filter</Button>
+</Stack>
