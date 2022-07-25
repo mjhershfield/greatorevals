@@ -136,7 +136,7 @@
 <div class="flex flex-col gap-2 overflow-y-auto">
     <NativeSelect data={["Department", "Course Number", "Professor"]} label="Group By:" bind:value={filter_state.group_by}/>
     <NativeSelect data={["Rating", "Name"]} label="Sort By:" bind:value={filter_state.sort_by}/>
-    <NativeSelect data={["Ascending", "Descending"]} label="Sort Order:" bind:value={filter_state.sort_order}/>
+    <NativeSelect data={["Descending", "Ascending"]} label="Sort Order:" bind:value={filter_state.sort_order}/>
     <p>Filtering Options:</p>
     <details>
         <summary class="text-center cursor-pointer">Departments</summary>
