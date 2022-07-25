@@ -18,7 +18,8 @@
             <FilterOptions on:new_filter={filter_data}/>
         </Navbar>
         <Header slot="header" height={60} override={{ p: '$mdPX' }}>
-            <Title order={1} color="blue">GREATOREVALS</Title>
+            <Title order={1} color="orange" override={{display: "inline"}}>Greator</Title>
+            <Title order={1} variant="gradient" color="blue" override={{display: "inline"}}>Evals</Title>
         </Header>
         <slot>
             {#await fetch("final_data.json")}
