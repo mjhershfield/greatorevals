@@ -27,31 +27,31 @@
             // 1 ratings for every question
         label: 'Strongly Disagree',
         data: ones,
-        backgroundColor: "#ff0000bb",
+        backgroundColor: "#FD141FBB",
         },
         {
             // 2 ratings for every question
         label: 'Disagree',
         data: twos,
-        backgroundColor: "#00ff00bb",
+        backgroundColor: "#fd7e14bb",
         },
         {
             // 3 ratings for every question
         label: 'Neutral',
         data: threes,
-        backgroundColor: "#0000ffbb",
+        backgroundColor: "#7B8791bb",
         },
         {
             // 4 ratings for every question
         label: 'Agree',
         data: fours,
-        backgroundColor: "#ffff00bb",
+        backgroundColor: "#7AB9F0BB",
         },
         {
             // 5 ratings for every question
         label: 'Strongly Agree',
         data: fives,
-        backgroundColor: "#00ffffbb",
+        backgroundColor: "#228be6bb",
         }]
     };
     const config = {
