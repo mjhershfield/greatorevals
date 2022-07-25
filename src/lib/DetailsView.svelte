@@ -97,7 +97,7 @@
 
     function populate_info_array(details_data: GroupedData)
     {
-        extra_info_array.splice(0);
+        extra_info_array = [];
         let extra_info_set: Set<number> = new Set<number>;
         if (grouping_method == "Department")
         {
@@ -109,15 +109,17 @@
             {
                 if (!extra_info_set.has(overall_data[row_index].p))
                 {
-                    extra_info_set.add(row_index);
-                    extra_info_array.push(row_index);
+                    extra_info_set.add(overall_data[row_index].p);
+                    extra_info_array.push(overall_data[row_index].p);
                 }
             }
             else if (grouping_method == "Professor")
-            if (!extra_info_set.has(overall_data[row_index].c))
             {
-                extra_info_set.add(row_index);
-                extra_info_array.push(row_index);
+                if (!extra_info_set.has(overall_data[row_index].c))
+                {
+                    extra_info_set.add(overall_data[row_index].c);
+                    extra_info_array.push(overall_data[row_index].c);
+                }
             }
         }
     }
@@ -130,17 +132,22 @@
     <Grid.Col span={3}>
         {#if grouping_method == "Course Number" || grouping_method == "Professor"}
             <p>Department: {department_mappings[overall_data[details_data.matching_rows[0]].d]}</p>
+            <br>
         {/if}
         {#if grouping_method == "Course Number"}
             <p>Professors that have taught this course:</p>
+            <ul class=" list-disc ml-1">
             {#each extra_info_array as professor_index}
-                <p>{professor_mappings[professor_index]}</p>
+                <li>{professor_mappings[professor_index]}</li>
             {/each}
+            </ul>
         {:else if grouping_method == "Professor"}
             <p>Courses that this professor has taught:</p>
+            <ul class=" list-disc ml-1">
             {#each extra_info_array as course_index}
-                <p>{course_mappings[course_index]}</p>
+                <li>{course_mappings[course_index]}</li>
             {/each}
+            </ul>
         {/if}
     </Grid.Col>
     <Grid.Col span={9}>
