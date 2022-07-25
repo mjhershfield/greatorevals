@@ -15,6 +15,8 @@ interface EvaluationQuestions
 interface FilterState
 {
     group_by: GroupingOptions;
+    sort_by: SortOptions;
+    sort_order: SortOrders;
     departments: Set<number>;
     courses: Set<number>;
     course_levels: Set<number>;
@@ -31,3 +33,5 @@ interface GroupedData
 }
 
 type GroupingOptions = "Department" | "Course Number" | "Professor";
+type SortOptions = "Rating" | "Name";
+type SortOrders = "Ascending" | "Descending";

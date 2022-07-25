@@ -14,6 +14,8 @@
     let fours: number[] = new Array(10).fill(1, 0);
     let fives: number[] = new Array(10).fill(1, 0);
 
+    // TODO: compute actual data for chart lol
+
     chart_title = "Details for ";
     if (grouping_method == "Course Number")
     {
@@ -92,4 +94,6 @@
     });
 </script>
 
+<!-- TODO: show information about what department professor/class is from -->
+<!-- TODO: show comparison between professor and similar professors? -->
 <canvas bind:this={canvas_element}/>

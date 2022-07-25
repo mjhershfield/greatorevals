@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Stack, Modal} from "@svelteuidev/core";
+    import { Stack, Modal, Group} from "@svelteuidev/core";
     import { course_mappings, department_mappings, professor_mappings } from "../assets/mappings";
     import SearchResultCard from "./SearchResultCard.svelte";
     import DetailsView from './DetailsView.svelte';
@@ -139,15 +139,75 @@
         console.log(grouped_data);
     }
 
+    function sort_data()
+    {
+        if (filter === undefined)
+        {
+            return;
+        }
+        let comparison_function: (a: GroupedData, b: GroupedData) => number;
+        if (filter.sort_by == "Rating")
+        {
+            if (filter.sort_order == "Ascending")
+            {
+                comparison_function = (a, b) => a.overall_average_rating - b.overall_average_rating;
+            }
+            else if (filter.sort_order == "Descending")
+            {
+                comparison_function = (a, b) => b.overall_average_rating - a.overall_average_rating;
+            }
+        }
+        else if (filter.sort_by == "Name")
+        {
+            if (filter.group_by == "Course Number")
+            {
+                if (filter.sort_order == "Ascending")
+                {
+                    comparison_function = (a, b) => course_mappings[data[a.matching_rows[0]].c].localeCompare(course_mappings[data[b.matching_rows[0]].c]);
+                }
+                else if (filter.sort_order == "Descending")
+                {
+                    comparison_function = (a, b) => -(course_mappings[data[a.matching_rows[0]].c].localeCompare(course_mappings[data[b.matching_rows[0]].c]));
+                }
+            }
+            else if (filter.group_by == "Department")
+            {
+                if (filter.sort_order == "Ascending")
+                {
+                    comparison_function = (a, b) => department_mappings[data[a.matching_rows[0]].d].localeCompare(department_mappings[data[b.matching_rows[0]].d]);
+                }
+                else if (filter.sort_order == "Descending")
+                {
+                    comparison_function = (a, b) => -(department_mappings[data[a.matching_rows[0]].d].localeCompare(department_mappings[data[b.matching_rows[0]].d]));
+                }
+            }
+            else if (filter.group_by == "Professor")
+            {
+                if (filter.sort_order == "Ascending")
+                {
+                    comparison_function = (a, b) => professor_mappings[data[a.matching_rows[0]].p].localeCompare(professor_mappings[data[b.matching_rows[0]].p]);
+                }
+                else if (filter.sort_order == "Descending")
+                {
+                    comparison_function = (a, b) => -(professor_mappings[data[a.matching_rows[0]].p].localeCompare(professor_mappings[data[b.matching_rows[0]].p]));
+                }
+            }
+        }
+
+        grouped_data.sort(comparison_function);
+    }
+
     $: {
             processing_in_progress = true;
             filter_data(filter);
             group_data();
             compute_averages();
+            sort_data();
             processing_in_progress = false;
         }
 </script>
 
+<!-- TODO: show how long different sorts take -->
 <Modal {opened} on:close={close_modal} withCloseButton={false} centered size="90vw">
     <DetailsView details_data={grouped_data[details_index]} grouping_method={filter.group_by} overall_data={data} />
 </Modal>

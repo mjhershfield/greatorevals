@@ -30,6 +30,8 @@
 
     let filter_state: FilterState = {
         group_by: "Department",
+        sort_by: "Rating",
+        sort_order: "Descending",
         departments: new Set<number>,
         courses: new Set<number>,
         course_levels: new Set<number>,
@@ -132,8 +134,9 @@
 </script>
 
 <div class="flex flex-col gap-2 overflow-y-auto">
-    <!-- TODO: add "Sort by" dropdown above the filtering options -->
     <NativeSelect data={["Department", "Course Number", "Professor"]} label="Group By:" bind:value={filter_state.group_by}/>
+    <NativeSelect data={["Rating", "Name"]} label="Sort By:" bind:value={filter_state.sort_by}/>
+    <NativeSelect data={["Ascending", "Descending"]} label="Sort Order:" bind:value={filter_state.sort_order}/>
     <p>Filtering Options:</p>
     <details>
         <summary class="text-center cursor-pointer">Departments</summary>
