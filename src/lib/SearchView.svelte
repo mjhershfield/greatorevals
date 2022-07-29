@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Stack, Modal, Group} from "@svelteuidev/core";
-    import { course_mappings, department_mappings, professor_mappings } from "../assets/mappings";
+    import { course_mappings, department_mappings, professor_mappings } from "./mappings";
     import SearchResultCard from "./SearchResultCard.svelte";
     import DetailsView from './DetailsView.svelte';
     

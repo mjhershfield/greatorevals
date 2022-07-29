@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Paper, Grid, Progress, Tooltip, Button } from "@svelteuidev/core";
-    import { course_mappings, department_mappings, professor_mappings } from "../assets/mappings";
+    import { course_mappings, department_mappings, professor_mappings } from "./mappings";
     import { createEventDispatcher } from "svelte";
     export let overall_data: EvaluationQuestions[];
     export let group_data : GroupedData;

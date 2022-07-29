@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import {course_mappings, department_mappings, professor_mappings, question_mappings} from "../assets/mappings";
+    import {course_mappings, department_mappings, professor_mappings, question_mappings} from "./mappings";
     import Chart from 'chart.js/auto/auto.js';
     import { Grid } from "@svelteuidev/core";
     export let overall_data: EvaluationQuestions[];

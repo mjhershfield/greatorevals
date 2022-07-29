@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Button, Checkbox, Stack, TextInput, Divider, NativeSelect } from '@svelteuidev/core';
     import {createEventDispatcher} from "svelte";
-    import {course_mappings, course_level_mappings, department_mappings, professor_mappings, question_mappings, term_mappings} from "../assets/mappings";
+    import {course_mappings, course_level_mappings, department_mappings, professor_mappings, question_mappings, term_mappings} from "./mappings";
 
     import Fuse from "fuse.js";
 
