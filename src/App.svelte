@@ -11,6 +11,7 @@ import AppInfoView from './lib/AppInfoView.svelte';
     let dev_opened: boolean = false;
     let dev_info: DevInfo;
 
+    // Whenever the filter is updated in FilterOptions.svelte, update the filtering used by the entire app.
     function filter_data(event: CustomEvent)
     {
         filter = event.detail.filter;
@@ -40,6 +41,7 @@ import AppInfoView from './lib/AppInfoView.svelte';
             <FilterOptions on:new_filter={filter_data}/>
         </Navbar>
         <slot>
+            <!-- Fetch API for getting GatorEvals data is asynchronous, so we need await -->
             {#await fetch("final_data.json")}
                 <p>waiting for file to be requested</p>
                 <Center><Loader size="xl"/></Center>

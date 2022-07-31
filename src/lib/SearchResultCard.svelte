@@ -7,6 +7,8 @@
     export let grouping_method: GroupingOptions;
     const dispatch = createEventDispatcher();
 
+    // When the "Show More Info >" button is clicked, fire an event that opens the details view
+    // in SearchView.svelte
     function open_details_view()
     {
         dispatch("open_details", {

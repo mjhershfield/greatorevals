@@ -2,7 +2,6 @@
     import { Button, Checkbox, Stack, TextInput, Divider, NativeSelect } from '@svelteuidev/core';
     import {createEventDispatcher} from "svelte";
     import {course_mappings, course_level_mappings, department_mappings, professor_mappings, question_mappings, term_mappings} from "./mappings";
-
     import Fuse from "fuse.js";
 
     const dispatch = createEventDispatcher();
@@ -24,6 +23,7 @@
     const course_search: Fuse<string> = new Fuse(course_mappings, search_options);
     const prof_search: Fuse<string> = new Fuse(professor_mappings, search_options);
 
+    // Whenever a search term updates, we update the corresponding search results.
     $: department_search_result = department_search.search(department_search_term).slice(0, 5);
     $: course_search_result = course_search.search(course_search_term).slice(0, 5);
     $: prof_search_result = prof_search.search(prof_search_term).slice(0, 5);
@@ -40,6 +40,7 @@
         questions: new Set<number>
     };
 
+    // When a department search result is clicked, toggle its membership in the filter
     function department_clicked(department_num: number) 
     {
         if (filter_state.departments.has(department_num))
@@ -51,9 +52,9 @@
                 filter_state.departments.add(department_num);
             }
             filter_state = filter_state;
-            console.log([... filter_state.departments.values()]);
     };
 
+    // When a course search result is clicked, toggle its membership in the filter
     function course_clicked(course_num: number) 
     {
         if (filter_state.courses.has(course_num))
@@ -65,9 +66,9 @@
                 filter_state.courses.add(course_num);
             }
             filter_state = filter_state;
-            console.log([... filter_state.courses.values()]);
     };
 
+    // When a course level checkbox is clicked, toggle its membership in the filter
     function course_level_clicked(course_level: number) 
     {
         if (filter_state.course_levels.has(course_level))
@@ -79,10 +80,9 @@
                 filter_state.course_levels.add(course_level);
             }
             filter_state = filter_state;
-            console.log([... filter_state.course_levels.values()]);
-
     };
 
+    // When a professor search result is clicked, toggle its membership in the filter
     function prof_clicked(prof_num: number) 
     {
         if (filter_state.professors.has(prof_num))
@@ -94,10 +94,9 @@
                 filter_state.professors.add(prof_num);
             }
             filter_state = filter_state;
-            console.log([... filter_state.professors.values()]);
-
     };
 
+    // When a question checkbox is clicked, toggle its membership in the filter
     function question_clicked(question_num: number) 
     {
         if (filter_state.questions.has(question_num))
@@ -109,9 +108,9 @@
                 filter_state.questions.add(question_num);
             }
             filter_state = filter_state;
-            console.log([... filter_state.questions.values()]);
     };
 
+    // When a term checkbox is clicked, toggle its membership in the filter
     function term_clicked(term_num: number) 
     {
             if (filter_state.terms.has(term_num))
@@ -123,10 +122,10 @@
                 filter_state.terms.add(term_num);
             }
             filter_state = filter_state;
-            console.log([... filter_state.terms.values()]);
-
     };
 
+    // When the "Filter" button is clicked, fire an even to update the current state of the filter
+    // throughout the entire app.
     function dispatch_filter_signal()
     {
         dispatch("new_filter", {filter: filter_state});

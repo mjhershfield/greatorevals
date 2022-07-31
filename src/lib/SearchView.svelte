@@ -28,20 +28,28 @@
     let averaging_end: number;
     let sorting_end: number;
 
+    // Open details view showing details for GroupedData at the given index in the grouped_data array
     function open_details_view(index: number)
     {
         opened = true;
         details_index = index;
     }
 
-    function close_modal()
+    // Close details view modal
+    function close_details_view()
     {
         opened = false;
     }
 
+    // Set rows_matching_filter to include the index of every element in the overall data array
+    // that matches the user-defined filter from FilterOptions.svelte
     function filter_data(filter: FilterState)
     {
+        // Remove all items from rows_matching_filter
         rows_matching_filter.splice(0);
+        // If the app is opened for the first time, the filter will be undefined until the "Filter"
+        // button is pressed for the first time. In this case, we return early since there is no 
+        // defined filter
         if (filter === undefined)
         {
             return;
@@ -50,6 +58,8 @@
         {
             for (const row of data.entries())
             {
+                // Skip over every row of the overall data that doesn't match the filter.
+                // We consider an empty filter to mean that every item is allowed.
                 if ((filter.departments.size > 0) && !filter.departments.has(row[1].d))
                 {
                     continue;
@@ -74,21 +84,24 @@
                 {
                     continue;
                 }
+                // If the row matches every criteria, add it to the list of filtered data
                 rows_matching_filter.push(row[0]);
             }
-            rows_matching_filter = rows_matching_filter;
         }
-        // COMPACT DATA REPRESENTATION SO THAT ALL QUESTIONS FOR SAME COURSE ARE MERGED INTO ONE?
     }
 
     function group_data()
     {
+        // Remove all existing items from grouped_data
         grouped_data.splice(0);
-        // department/course/professor id -> index in grouped_data for matching data
+        // index mappings maps from a department/course/professor ID -> index in grouped_data for
+        // data that matches that ID
         let index_mappings = new Map<number, number>;
         let index_to_match: number;
         for (const row_index of rows_matching_filter)
         {
+            // Determine what integer corresponds to a match based on what type of comparison we
+            // are making.
             switch (filter.group_by)
             {
                 case "Course":
@@ -104,12 +117,12 @@
 
             if (index_mappings.has(index_to_match))
             {
-                // Add to existing GroupedData object
+                // Add current row to existing GroupedData object
                 grouped_data[index_mappings.get(index_to_match)].matching_rows.push(row_index);
             }
             else
             {
-                // create new GroupedData object
+                // Create new GroupedData object
                 index_mappings.set(index_to_match, grouped_data.length);
                 grouped_data.push({
                     matching_rows: [row_index],
@@ -121,6 +134,7 @@
         return;
     }
 
+    // Compute average ratings per question in each group and the overall average rating for each group.
     function compute_averages()
     {
         let number_of_rows_per_question: number[] = new Array(10);
@@ -128,9 +142,13 @@
         let number_of_questions_answered_in_group: number;
         for (let group of grouped_data)
         {
+            // Reset the number of rows per question and the number of questions answered in this group to 0
             number_of_rows_per_question.fill(0, 0);
             number_of_questions_answered_in_group = 0;
 
+            // For each data object in the group, add the average rating for the question represented
+            // by that row to the index in the group's average ratings by question array representing
+            // that question.
             for (const row_index of group.matching_rows)
             {
                 current_row = data[row_index]
@@ -140,6 +158,8 @@
                 number_of_rows_per_question[current_row.q] += 1;
             }
 
+            // Based on how many data objects there were for each question, compute the average rating for
+            // each question and add it to the overall average rating for the group.
             for (let q_index = 0; q_index < 10; q_index++) {
                 if (number_of_rows_per_question[q_index] > 0)
                 {
@@ -149,14 +169,15 @@
                 }
             }
 
+            // Compute the overall average rating for the group
             group.overall_average_rating /= number_of_questions_answered_in_group;
         }
-
-        console.log(grouped_data);
     }
 
+    // Sort the data for viewing by the user
     function sort_data()
     {
+        // If the "Filter" button has not been pressed yet (e.g. page reload), don't bother sorting.
         if (filter === undefined)
         {
             return;
@@ -164,11 +185,11 @@
 
         let comparison_function: (a: GroupedData, b: GroupedData) => number;
 
+        // Choose correct comparison function depending on what we are sorting by and the comparison order.
         if (filter.sort_order == "Ascending")
         {
             switch (filter.sort_by)
             {
-                // Sort ascending by default
                 case "Name":
                     switch(filter.group_by)
                     {
@@ -184,8 +205,7 @@
                     }
                     break;
 
-                    // Sort by ratings by default
-                    default:
+                    case "Rating":
                         comparison_function = (a, b) => a.overall_average_rating - b.overall_average_rating;
                         break;
             }
@@ -210,12 +230,13 @@
                     break;
 
                     // Sort by ratings by default
-                    default:
+                    case "Rating":
                         comparison_function = (a, b) => b.overall_average_rating - a.overall_average_rating;
                         break;
             }
         }
         
+        // Use sorting algorithm specified in the Dev Info modal
         switch (dev_info.sort_algorithm)
         {
             case "Bubble Sort":
@@ -236,6 +257,8 @@
         }
     }
 
+    // Updates the dev_info object with how long each step of data processing took and the length
+    // of each list processed.
     function update_dev_info()
     {
         dev_info.overall_data_size = data.length;
@@ -247,6 +270,7 @@
         dev_info.sorting_time = (sorting_end - averaging_end) / 1000;
     }
 
+    // Whenever filter changes ("Filter" button is pressed), reprocess the list of data to be viewed.
     $: {
             processing_start = Date.now();
             filter_data(filter);
@@ -261,14 +285,14 @@
         }
 </script>
 
-<Modal {opened} on:close={close_modal} withCloseButton={false} centered size="90vw">
+<Modal {opened} on:close={close_details_view} withCloseButton={false} centered size="90vw">
     <DetailsView details_data={grouped_data[details_index]} grouping_method={filter.group_by} overall_data={data} />
 </Modal>
 <Stack>
     {#if filter === undefined}
-        <p>Choose a filter from the left panel</p>
+        <p class=" text-center">Choose a filter from the left panel</p>
     {:else if grouped_data.length == 0}
-        <p>No results match your filter selection</p>
+        <p class=" text-center">No results match your filter selection</p>
     {:else}
         {#each grouped_data.slice(0, 30) as row, index}
             <SearchResultCard overall_data={data} group_data={row} grouping_method={filter.group_by} on:open_details={() => {open_details_view(index)}}/>

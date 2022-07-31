@@ -1,6 +1,9 @@
+// All sorting algorithms have a return value so that when a sort is triggered the Svelte compiler knows
+// to update all app state that relies on the sorted array. In Svelte, assignment operation == update needed.
+
 export function merge_sort(arr: GroupedData[], comparison: (a: GroupedData, b: GroupedData) => number): GroupedData[]
 {
-    // Heavily relies on browser's garbage collection
+    // Heavily relies on browser's garbage collection lol. This is just a standard merge sort implementation.
     if (arr.length == 1)
     {
         return arr;
@@ -33,6 +36,8 @@ function merge(left: GroupedData[], right: GroupedData[], comparison: (a: Groupe
         }
     }
 
+    // Once one array has run out of values, append the rest of the other array to the end of the 
+    // merged array.
     while (left_index < left.length)
     {
         merged_array[merged_index++] = left[left_index++];
@@ -45,62 +50,6 @@ function merge(left: GroupedData[], right: GroupedData[], comparison: (a: Groupe
 
     return merged_array;
 }
-
-/* Quick Sort not fully implemented yet
-
-export function quick_sort(arr: GroupedData[], start_index: number, end_index: number, comparison: (a: GroupedData, b: GroupedData) => number): GroupedData[]
-{
-    if (arr.length == 1)
-    {
-        return arr;
-    }
-
-    if (arr.length < 4)
-    {
-        return insertion_sort(arr, comparison);
-    }
-    let pivot_index = find_pivot_index(arr, start_index, end_index, comparison);
-
-    let temp_value: GroupedData = arr[start_index];
-    arr[start_index] = arr[pivot_index];
-    arr[pivot_index] = temp_value;
-
-    let pivot_value = arr[0]
-
-    let partition_pivot_index: number = partition(arr, start_index, end_index, comparison);
-
-    return arr;
-}
-
-function find_pivot_index(arr: GroupedData[], start_index: number, end_index: number, comparison: (a: GroupedData, b: GroupedData) => number): number
-{
-    let mid_index = (start_index + end_index) / 2;
-    let possible_pivots_array: GroupedData[] = insertion_sort([arr[start_index], arr[mid_index], arr[end_index]], comparison);
-    let median: GroupedData = possible_pivots_array[1];
-
-    if (arr[start_index] == median)
-    {
-        return start_index;
-    }
-    else if (arr[mid_index] == median)
-    {
-        return mid_index;
-    }
-    else
-    {
-        return end_index;
-    }
-}
-
-// Returns index where partition is stored
-export function partition(arr: GroupedData[], start_index: number, end_index: number, comparison: (a: GroupedData, b: GroupedData) => number): number
-{
-    let left_index: number = 0;
-    let right_index: number = 0;
-
-    return 0;
-}
-*/
 
 export function heap_sort(arr: GroupedData[], comparison: (a: GroupedData, b: GroupedData) => number): GroupedData[]
 {

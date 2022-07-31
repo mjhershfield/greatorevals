@@ -7,6 +7,9 @@
     let sort_algorithm_list: SortAlgorithms[] = ["JS Array.sort()", "Merge Sort", "Heap Sort", "Insertion Sort", "Bubble Sort"];
     let sort_algorithm_list_for_dropdown: SortAlgorithms[]
 
+    // When the window is opened, we reorder the list of algorithms shown in the dropdown so that the
+    // currently selected sort algorithm is selected by default. This is a workaround for a weird
+    // bug in the two-way data binding of the SvelteUI dropdown NativeSelect.
     onMount(()=>{
         sort_algorithm_list_for_dropdown = sort_algorithm_list;
         sort_algorithm_list_for_dropdown.splice(sort_algorithm_list.indexOf(dev_info.sort_algorithm), 1);
