@@ -1,16 +1,32 @@
 <script lang="ts">
     import { Stack, Modal, Group} from "@svelteuidev/core";
     import { course_mappings, department_mappings, professor_mappings } from "./mappings";
+    import { bubble_sort, heap_sort, insertion_sort, merge_sort } from "./sorts";
     import SearchResultCard from "./SearchResultCard.svelte";
     import DetailsView from './DetailsView.svelte';
     
     export let data: EvaluationQuestions[];
     export let filter: FilterState;
-    let rows_matching_filter: number[];
-    let grouped_data: GroupedData[];
-    let processing_in_progress: boolean = false;
+    export let dev_info: DevInfo = {
+        sort_algorithm: "JS Array.sort()",
+        overall_data_size: 0,
+        filtered_data_size: 0,
+        grouped_data_size: 0,
+        filtering_time: 0,
+        grouping_time: 0,
+        averaging_time: 0,
+        sorting_time: 0
+    };
+
+    let rows_matching_filter: number[] = new Array();
+    let grouped_data: GroupedData[] = new Array();
     let opened: boolean = false;
     let details_index: number = 0;
+    let processing_start: number;
+    let filtering_end: number;
+    let grouping_end: number;
+    let averaging_end: number;
+    let sorting_end: number;
 
     function open_details_view(index: number)
     {
@@ -25,7 +41,7 @@
 
     function filter_data(filter: FilterState)
     {
-        rows_matching_filter = []
+        rows_matching_filter.splice(0);
         if (filter === undefined)
         {
             return;
@@ -67,23 +83,23 @@
 
     function group_data()
     {
-        grouped_data = [];
+        grouped_data.splice(0);
         // department/course/professor id -> index in grouped_data for matching data
         let index_mappings = new Map<number, number>;
         let index_to_match: number;
         for (const row_index of rows_matching_filter)
         {
-            if (filter.group_by == "Course Number")
+            switch (filter.group_by)
             {
-                index_to_match = data[row_index].c;
-            }
-            else if (filter.group_by == "Department")
-            {
-                index_to_match = data[row_index].d;
-            }
-            else if (filter.group_by == "Professor")
-            {
-                index_to_match = data[row_index].p;
+                case "Course":
+                    index_to_match = data[row_index].c;
+                    break;
+                case "Department":
+                    index_to_match = data[row_index].d;
+                    break;
+                case "Professor":
+                    index_to_match = data[row_index].p;
+                    break;
             }
 
             if (index_mappings.has(index_to_match))
@@ -145,78 +161,112 @@
         {
             return;
         }
-        let comparison_function: (a: GroupedData, b: GroupedData) => number;
-        if (filter.sort_by == "Rating")
-        {
-            if (filter.sort_order == "Ascending")
-            {
-                comparison_function = (a, b) => a.overall_average_rating - b.overall_average_rating;
-            }
-            else if (filter.sort_order == "Descending")
-            {
-                comparison_function = (a, b) => b.overall_average_rating - a.overall_average_rating;
-            }
-        }
-        else if (filter.sort_by == "Name")
-        {
-            if (filter.group_by == "Course Number")
-            {
-                if (filter.sort_order == "Ascending")
-                {
-                    comparison_function = (a, b) => course_mappings[data[a.matching_rows[0]].c].localeCompare(course_mappings[data[b.matching_rows[0]].c]);
-                }
-                else if (filter.sort_order == "Descending")
-                {
-                    comparison_function = (a, b) => -(course_mappings[data[a.matching_rows[0]].c].localeCompare(course_mappings[data[b.matching_rows[0]].c]));
-                }
-            }
-            else if (filter.group_by == "Department")
-            {
-                if (filter.sort_order == "Ascending")
-                {
-                    comparison_function = (a, b) => department_mappings[data[a.matching_rows[0]].d].localeCompare(department_mappings[data[b.matching_rows[0]].d]);
-                }
-                else if (filter.sort_order == "Descending")
-                {
-                    comparison_function = (a, b) => -(department_mappings[data[a.matching_rows[0]].d].localeCompare(department_mappings[data[b.matching_rows[0]].d]));
-                }
-            }
-            else if (filter.group_by == "Professor")
-            {
-                if (filter.sort_order == "Ascending")
-                {
-                    comparison_function = (a, b) => professor_mappings[data[a.matching_rows[0]].p].localeCompare(professor_mappings[data[b.matching_rows[0]].p]);
-                }
-                else if (filter.sort_order == "Descending")
-                {
-                    comparison_function = (a, b) => -(professor_mappings[data[a.matching_rows[0]].p].localeCompare(professor_mappings[data[b.matching_rows[0]].p]));
-                }
-            }
-        }
 
-        grouped_data.sort(comparison_function);
+        let comparison_function: (a: GroupedData, b: GroupedData) => number;
+
+        if (filter.sort_order == "Ascending")
+        {
+            switch (filter.sort_by)
+            {
+                // Sort ascending by default
+                case "Name":
+                    switch(filter.group_by)
+                    {
+                        case "Course":
+                            comparison_function = (a, b) => course_mappings[data[a.matching_rows[0]].c].localeCompare(course_mappings[data[b.matching_rows[0]].c]);
+                            break;
+                        case "Department":
+                            comparison_function = (a, b) => department_mappings[data[a.matching_rows[0]].d].localeCompare(department_mappings[data[b.matching_rows[0]].d]);
+                            break;
+                        case "Professor":
+                            comparison_function = (a, b) => professor_mappings[data[a.matching_rows[0]].p].localeCompare(professor_mappings[data[b.matching_rows[0]].p]);
+                            break;
+                    }
+                    break;
+
+                    // Sort by ratings by default
+                    default:
+                        comparison_function = (a, b) => a.overall_average_rating - b.overall_average_rating;
+                        break;
+            }
+        }
+        else if (filter.sort_order == "Descending")
+        {
+            switch (filter.sort_by)
+            {
+                case "Name":
+                    switch(filter.group_by)
+                    {
+                        case "Course":
+                            comparison_function = (a, b) => course_mappings[data[b.matching_rows[0]].c].localeCompare(course_mappings[data[a.matching_rows[0]].c]);
+                            break;
+                        case "Department":
+                            comparison_function = (a, b) => department_mappings[data[b.matching_rows[0]].d].localeCompare(department_mappings[data[a.matching_rows[0]].d]);
+                            break;
+                        case "Professor":
+                            comparison_function = (a, b) => professor_mappings[data[b.matching_rows[0]].p].localeCompare(professor_mappings[data[a.matching_rows[0]].p]);
+                            break;
+                    }
+                    break;
+
+                    // Sort by ratings by default
+                    default:
+                        comparison_function = (a, b) => b.overall_average_rating - a.overall_average_rating;
+                        break;
+            }
+        }
+        
+        switch (dev_info.sort_algorithm)
+        {
+            case "Bubble Sort":
+                grouped_data = bubble_sort(grouped_data, comparison_function);
+                break;
+            case "Insertion Sort":
+                grouped_data = insertion_sort(grouped_data, comparison_function);
+                break;
+            case "Heap Sort":
+                grouped_data = heap_sort(grouped_data, comparison_function);
+                break;
+            case "Merge Sort":
+                grouped_data = merge_sort(grouped_data, comparison_function);
+                break;
+            case "JS Array.sort()":
+                grouped_data = grouped_data.sort(comparison_function);
+                break;
+        }
+    }
+
+    function update_dev_info()
+    {
+        dev_info.overall_data_size = data.length;
+        dev_info.filtered_data_size = rows_matching_filter.length;
+        dev_info.grouped_data_size = grouped_data.length;
+        dev_info.filtering_time = (filtering_end - processing_start) / 1000;
+        dev_info.grouping_time = (grouping_end - filtering_end) / 1000;
+        dev_info.averaging_time = (averaging_end - grouping_end) / 1000;
+        dev_info.sorting_time = (sorting_end - averaging_end) / 1000;
     }
 
     $: {
-            processing_in_progress = true;
+            processing_start = Date.now();
             filter_data(filter);
+            filtering_end = Date.now()
             group_data();
+            grouping_end = Date.now()
             compute_averages();
+            averaging_end = Date.now()
             sort_data();
-            processing_in_progress = false;
+            sorting_end = Date.now()
+            update_dev_info()
         }
 </script>
 
-<!-- TODO: show how long different sorts take -->
 <Modal {opened} on:close={close_modal} withCloseButton={false} centered size="90vw">
     <DetailsView details_data={grouped_data[details_index]} grouping_method={filter.group_by} overall_data={data} />
 </Modal>
 <Stack>
-    <!-- Search Results -->
     {#if filter === undefined}
         <p>Choose a filter from the left panel</p>
-    {:else if processing_in_progress}
-        <p>Processing in progress</p>
     {:else if grouped_data.length == 0}
         <p>No results match your filter selection</p>
     {:else}

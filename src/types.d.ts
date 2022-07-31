@@ -32,6 +32,19 @@ interface GroupedData
     overall_average_rating : number;
 }
 
-type GroupingOptions = "Department" | "Course Number" | "Professor";
+interface DevInfo
+{
+    sort_algorithm: SortAlgorithms;
+    overall_data_size: number;
+    filtered_data_size: number;
+    grouped_data_size: number;
+    filtering_time: number;
+    grouping_time: number;
+    averaging_time: number;
+    sorting_time: number;
+}
+
+type GroupingOptions = "Department" | "Course" | "Professor";
 type SortOptions = "Rating" | "Name";
 type SortOrders = "Ascending" | "Descending";
+type SortAlgorithms = "JS Array.sort()" | "Merge Sort" | "Heap Sort" | "Insertion Sort" | "Bubble Sort";

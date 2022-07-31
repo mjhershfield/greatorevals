@@ -19,7 +19,7 @@
 <Paper>
     <Grid justify="space-around" align="center">
         <Grid.Col span={6}>
-            {#if grouping_method == "Course Number"}
+            {#if grouping_method == "Course"}
                 <p>Course: {course_mappings[overall_data[group_data.matching_rows[0]].c]}</p>
             {:else if grouping_method == "Professor"}
                 <p>Professor: {professor_mappings[overall_data[group_data.matching_rows[0]].p]}</p>

@@ -86,7 +86,7 @@
     function update_chart_title()
     {
         chart_title = "Details for ";
-        if (grouping_method == "Course Number")
+        if (grouping_method == "Course")
         {
             chart_title += course_mappings[overall_data[details_data.matching_rows[0]].c];
         }
@@ -110,7 +110,7 @@
         }
         for (const row_index of details_data.matching_rows)
         {
-            if (grouping_method == "Course Number")
+            if (grouping_method == "Course")
             {
                 if (!extra_info_set.has(overall_data[row_index].p))
                 {
@@ -184,11 +184,11 @@
 <!-- TODO: show comparison between professor and similar professors? -->
 <Grid>
     <Grid.Col span={extra_info_span}>
-        {#if grouping_method == "Course Number" || grouping_method == "Professor"}
+        {#if grouping_method == "Course" || grouping_method == "Professor"}
             <p>Department: {department_mappings[overall_data[details_data.matching_rows[0]].d]}</p>
             <br>
         {/if}
-        {#if grouping_method == "Course Number"}
+        {#if grouping_method == "Course"}
             <p>Professors that have taught this course:</p>
             <ul class=" list-disc ml-1">
             {#each extra_info_array as professor_index}

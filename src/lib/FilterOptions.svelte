@@ -134,7 +134,7 @@
 </script>
 
 <Stack>
-    <NativeSelect data={["Department", "Course Number", "Professor"]} label="Group By:" bind:value={filter_state.group_by}/>
+    <NativeSelect data={["Department", "Course", "Professor"]} label="Compare:" bind:value={filter_state.group_by}/>
     <NativeSelect data={["Rating", "Name"]} label="Sort By:" bind:value={filter_state.sort_by}/>
     <NativeSelect data={["Descending", "Ascending"]} label="Sort Order:" bind:value={filter_state.sort_order}/>
     <p>Filtering Options:</p>
