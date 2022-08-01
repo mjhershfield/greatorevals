@@ -55,7 +55,7 @@ import AppInfoView from './lib/AppInfoView.svelte';
             {/await}
         </slot>
     </AppShell>
-    <Modal opened={info_opened} on:close={()=>{info_opened = false}}>
+    <Modal opened={info_opened} on:close={()=>{info_opened = false}} size="90vw">
         <AppInfoView />
     </Modal>
     <Modal opened={dev_opened} on:close={()=>{dev_opened = false}}>
